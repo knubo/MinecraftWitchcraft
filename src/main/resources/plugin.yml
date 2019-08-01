@@ -1,0 +1,8 @@
+name: Witchcraft
+version: ${project.version}
+main: no.knubo.minecraft.witchcraft.Witchcraft
+api-version: 1.13
+prefix: knubo
+authors: [Knubo]
+description: Easy witchcraft
+website: http://knubo.no
