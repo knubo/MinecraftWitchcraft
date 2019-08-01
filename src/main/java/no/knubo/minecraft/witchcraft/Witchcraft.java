@@ -1,9 +1,6 @@
 package no.knubo.minecraft.witchcraft;
 
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -48,10 +45,26 @@ public final class Witchcraft extends JavaPlugin implements Listener {
             return;
         }
 
-        if(block.getLocation().getY() > 154) {
+        if (block.getLocation().getY() > 154) {
+            buildLanding(block);
             return;
         }
 
+        buildStair(block, stairMeta);
+    }
+
+    private void buildLanding(Block block) {
+        Location location = block.getLocation();
+        World world = location.getWorld();
+
+        for (int x = 0; x < 30; x++) {
+            for (int z = 0; z < 30; z++) {
+                world.getBlockAt(location.getBlockX() + x, location.getBlockY(), location.getBlockZ() + z).setType(Material.COBBLESTONE);
+            }
+        }
+    }
+
+    private void buildStair(Block block, List<MetadataValue> stairMeta) {
         int stepCount = stairMeta.get(0).asInt();
 
         for (int i = 0; i < 3; i++) {
