@@ -5,11 +5,13 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -22,6 +24,7 @@ import java.util.List;
 public final class Witchcraft extends JavaPlugin implements Listener {
 
     public static final String KNUBOSTAIR = "knubostair";
+    private Entity witch;
 
     @Override
     public void onEnable() {
@@ -49,19 +52,48 @@ public final class Witchcraft extends JavaPlugin implements Listener {
             buildLanding(block);
             return;
         }
+        World world = block.getWorld();
+
+        world.setStorm(false);
+        world.setThundering(false);
 
         buildStair(block, stairMeta);
+    }
+
+    @EventHandler
+    public void onMonsterHurt(EntityDamageByEntityEvent e) {
+        if(e.getEntity().getCustomName() != null && e.getEntity().getCustomName().equals("Wabbado") && e.getEntity().getScoreboardTags().contains("knubo")) {
+            e.getEntity().remove();
+            witch = null;
+        }
     }
 
     private void buildLanding(Block block) {
         Location location = block.getLocation();
         World world = location.getWorld();
 
+        world.setStorm(true);
+        world.setThundering(true);
+        world.setThunderDuration(60);
+
         for (int x = 0; x < 30; x++) {
-            for (int z = 0; z < 30; z++) {
-                world.getBlockAt(location.getBlockX() + x, location.getBlockY(), location.getBlockZ() + z).setType(Material.COBBLESTONE);
+            for (int z = -5; z < 30; z++) {
+                int x1 = location.getBlockX() + x;
+                int y1 = location.getBlockY();
+                int z1 = location.getBlockZ() + z;
+                world.getBlockAt(x1, y1, z1).setType(Material.COBBLESTONE);
+                world.spawnParticle(Particle.CLOUD, x1, y1+15, z1, 1);
             }
         }
+        location.add(15,2,15);
+        if(witch != null) {
+            witch.remove();
+        }
+        witch = world.spawnEntity(location, EntityType.VILLAGER);
+        witch.setGlowing(true);
+        witch.setCustomName("Wabbado");
+        witch.setCustomNameVisible(true);
+        witch.addScoreboardTag("knubo");
     }
 
     private void buildStair(Block block, List<MetadataValue> stairMeta) {
@@ -108,6 +140,11 @@ public final class Witchcraft extends JavaPlugin implements Listener {
 
         fw.setFireworkMeta(fwm);
         fw.detonate();
+
+        getLogger().info("current Y coordinate is:"+location.getY());
+        if(location.getY() > 80) {
+            return;
+        }
 
         location = location.add(2, 0, 0);
 
