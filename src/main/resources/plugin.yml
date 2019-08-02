@@ -6,3 +6,7 @@ prefix: knubo
 authors: [Knubo]
 description: Easy witchcraft
 website: http://knubo.no
+commands:
+  elevator:
+    description: Summon elevator
+    usage: /{elevator}

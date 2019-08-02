@@ -31,6 +31,8 @@ public final class Witchcraft extends JavaPlugin implements Listener {
         getLogger().info("Plugin started");
         Class<? extends Event> foo;
         getServer().getPluginManager().registerEvents(this, this);
+
+        this.getCommand("elevator").setExecutor(new ElevatorCommand());
     }
 
     @Override
@@ -62,7 +64,7 @@ public final class Witchcraft extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onMonsterHurt(EntityDamageByEntityEvent e) {
-        if(e.getEntity().getCustomName() != null && e.getEntity().getCustomName().equals("Wabbado") && e.getEntity().getScoreboardTags().contains("knubo")) {
+        if (e.getEntity().getCustomName() != null && e.getEntity().getCustomName().equals("Wabbado") && e.getEntity().getScoreboardTags().contains("knubo")) {
             e.getEntity().remove();
             witch = null;
         }
@@ -82,11 +84,11 @@ public final class Witchcraft extends JavaPlugin implements Listener {
                 int y1 = location.getBlockY();
                 int z1 = location.getBlockZ() + z;
                 world.getBlockAt(x1, y1, z1).setType(Material.COBBLESTONE);
-                world.spawnParticle(Particle.CLOUD, x1, y1+15, z1, 1);
+                world.spawnParticle(Particle.CLOUD, x1, y1 + 15, z1, 1);
             }
         }
-        location.add(15,2,15);
-        if(witch != null) {
+        location.add(15, 2, 15);
+        if (witch != null) {
             witch.remove();
         }
         witch = world.spawnEntity(location, EntityType.VILLAGER);
@@ -141,8 +143,8 @@ public final class Witchcraft extends JavaPlugin implements Listener {
         fw.setFireworkMeta(fwm);
         fw.detonate();
 
-        getLogger().info("current Y coordinate is:"+location.getY());
-        if(location.getY() > 80) {
+        getLogger().info("current Y coordinate is:" + location.getY());
+        if (location.getY() > 80) {
             return;
         }
 
